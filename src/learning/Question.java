@@ -1,15 +1,14 @@
 package learning;
 
-import user.User;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class Question {
+public class Question implements utilityAndServices.InterfaceCompare<Question>{
     private String question;
     private String answer;
     private int points;
 
+    @Override
+    public boolean compareTo(Question question) {
+        return this.points > question.getPoints(); // int is primitive, can t use compareTo
+    }
     public Question(String question, String answer, int points) {
         this.question = question;
         this.answer = answer;
@@ -17,5 +16,13 @@ public class Question {
     }
     public int getPoints(){
         return points;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public String getAnswer() {
+        return answer;
     }
 }

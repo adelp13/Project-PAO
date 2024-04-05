@@ -32,16 +32,16 @@ public class Main {
 
         // we add courses with their teacher (an user already added)
         Course c1 = new Course(10.0, "Course 1", Difficulty.EASY, List.of(
-                new Quiz(Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2))),
-                new Quiz(Difficulty.MEDIUM,List.of(new Question("2+1", "3", 2), new Question("1+1", "2", 3)))), 10.0, u1);
+                new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2))),
+                new Quiz("Quiz 2", Difficulty.MEDIUM,List.of(new Question("2+1", "3", 2), new Question("1+1", "2", 3)))), 10.0, u1);
         Course c2 = new Course(20.0, "Course 2", Difficulty.MEDIUM, List.of(
-                new Quiz(Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 15.0, u2);
+                new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 15.0, u2);
         Course c3 = new Course(30.0, "Course 3", Difficulty.HARD, List.of(
-                new Quiz(Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 30.5, u3);
+                new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 30.5, u3);
         Course c4 = new AccreditedCourse(15.0, "Course 4", Difficulty.HARD, List.of(
-                new Quiz(Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 42.5, u3, 10, Level.ADVANCED);
+                new Quiz("Quiz 1",Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 42.5, u3, 10, Level.ADVANCED);
         Course c5 = new AccreditedCourse(18.0, "Course 5", Difficulty.EASY, List.of(
-                new Quiz(Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 13.5, u1, 5, Level.BASIC);
+                new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 13.5, u1, 5, Level.BASIC);
         S.courseList.add(c1);
         S.courseList.add(c2);
         S.courseList.add(c3);
@@ -69,7 +69,7 @@ public class Main {
                 } else S.signupUser();
             }
             else{
-                System.out.println("1.Add a course 2.Disconnect 3.Show all subjects sorted by name 4.Show all courses 5.Buy a course");
+                System.out.println("1.Add a course 2.Disconnect 3.Show all subjects sorted by name 4.Show all courses 5.Buy a course 6.Show courses started\n");
                 int command = scanner.nextInt();
                 switch (command) {
                     case 1:
@@ -78,15 +78,16 @@ public class Main {
                     case 2:
                         S.disconnectUser();
                         break;
-//                    case 3:
-//
-//                        break;
+                    case 3:
+                        //S.showEnrolledCourses();
                     case 4:
                         S.showAllCourses();
                         break;
                     case 5:
                         S.buyCourse();
                         break;
+                    case 6:
+                        S.showCoursesStarted();
                     default:
                 }
             }

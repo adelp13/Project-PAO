@@ -12,7 +12,9 @@ import java.util.HashSet;
 import java.util.Set;
 import learning.Difficulty;
 import learning.Level;
+import learning.Quiz;
 import payment.Card;
+
 public class ApplicationSite {
     // clasa serviciu de tip singletone
     private static ApplicationSite applicationSite; // a user can add buy a course/ post a course only if she is connected
@@ -34,6 +36,52 @@ public class ApplicationSite {
         return applicationSite;
     }
 
+    public void showCoursesStarted() {
+        Map<Course, Map<Quiz, String>> map = connectedUser.getCourseProgress();
+        System.out.println("Your courses started are: ");
+        map.forEach((course, map2) -> {
+            int quizesTried = map2.size();
+            System.out.println(course + "You have tried " + quizesTried + " quizes out of " + course.getQuizList().size());
+        });
+
+        System.out.println("If you want to do quizes in a course, write course name. Else write exit ");
+        Scanner scanner = new Scanner(System.in);
+        String command = scanner.nextLine();
+        if (!command.equalsIgnoreCase("exit")) {
+            map.forEach((course, map2) -> {
+                if (course.getName().equalsIgnoreCase(command)) {
+                    for (Quiz quiz : course.getQuizList()) { // we got through the quizes of the course and if a quiz is not in map2 it means the user hasn't tried the quiz
+                        if (map2.containsKey(quiz)) {
+                            System.out.println(quiz + "You scored " + map2.get(quiz) + " points.");
+                        }
+                        else {
+                            System.out.println(quiz + "You haven't tried this quiz yet.");
+                        }
+                    }
+                }
+                boolean userTriesQuizes = true;
+
+                while(userTriesQuizes) {
+                    System.out.println("Enter the name of the quiz you want to try, or exit.");
+                    String c = scanner.nextLine();
+                    if (c.equals("exit")){
+                        userTriesQuizes = false;
+                        showCoursesStarted();
+                        return;
+                    }
+                    else {
+                        for (Quiz quiz : course.getQuizList()) {
+                            if (quiz.getName().equals(c)) {
+                                double score = quiz.runQuiz();// function that displays the questions and calculate your score
+                                map2.put(quiz, String.valueOf(score)); // we add in the quizes result collection of the course key
+                                System.out.println("Your score for quiz " + quiz.getName() + " has been recorded.");
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
     public void buyCourse() { // the connected user can buy a course
         Scanner scanner = new Scanner(System.in);
 
@@ -136,7 +184,7 @@ public class ApplicationSite {
 
         System.out.println("This is the list of subjects:");
         displaySubjects();
-        System.out.println("Choose at least one subject:");
+        System.out.println("Choose at least one subject (write their names):");
         String[] chosenSubjects = scanner.nextLine().split("[,\\s]+");
         Set<Subject> courseSubjects = new HashSet<>();
 

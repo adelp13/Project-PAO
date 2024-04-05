@@ -4,7 +4,7 @@ import user.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Course {
+public class Course implements utilityAndServices.InterfaceCompare<Course> {
     protected String name;
     protected Difficulty difficulty;
     protected double length; // in hours
@@ -42,5 +42,12 @@ public class Course {
     public double getPrice() {
         return length;
     }
+    public List<Quiz> getQuizList() {
+        return quizList;
+    }
 
+    @Override
+    public boolean compareTo(Course course) {
+        return this.name.compareTo(course.name);
+    }
 }

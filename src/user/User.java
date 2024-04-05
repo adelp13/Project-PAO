@@ -10,7 +10,7 @@ import learning.Course;
 import learning.Quiz;
 public class User { // a user can be both student and teacher
     private final int idUser;
-    private Map<Course, Map<Quiz, Integer>> courseProgress; // the courses where the user is enrolled and points obtained for every quiz
+    private Map<Course, Map<Quiz, String>> courseProgress; // the courses where the user is enrolled and points obtained for every quiz
     private final String userName; // user name has to be unique
     private final String registrationDate;
     private final String lastName;
@@ -93,7 +93,7 @@ public class User { // a user can be both student and teacher
         return this.registrationDate;
     }
 
-    public Map<Course, Map<Quiz, Integer>> getCourseProgress() {return this.courseProgress;}
+    public Map<Course, Map<Quiz, String>> getCourseProgress() {return this.courseProgress;}
     public void setCardList(List<Card> cardList) {
         this.cardList = cardList;
     }
