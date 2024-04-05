@@ -1,6 +1,6 @@
 package learning;
 
-public class Subject implements utilityAndServices.InterfaceCompare<Subject> {
+public class Subject implements Comparable<Subject> {
     protected String name;
     protected String description;
 
@@ -21,7 +21,7 @@ public class Subject implements utilityAndServices.InterfaceCompare<Subject> {
         return "Subject " + name + " description: " + description + "\n";
     }
     @Override
-    public boolean compareTo(Subject subject) {
+    public int compareTo(Subject subject) {
         return this.name.compareTo(subject.name);
     }
 }

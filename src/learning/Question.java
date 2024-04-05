@@ -1,13 +1,13 @@
 package learning;
 
-public class Question implements utilityAndServices.InterfaceCompare<Question>{
+public class Question implements Comparable<Question>{
     private String question;
     private String answer;
     private int points;
 
     @Override
-    public boolean compareTo(Question question) {
-        return this.points > question.getPoints(); // int is primitive, can t use compareTo
+    public int compareTo(Question question) {
+        return Integer.compare(this.points, question.getPoints()); // it returns a negative integer int if first arg < second arg
     }
     public Question(String question, String answer, int points) {
         this.question = question;

@@ -1,15 +1,10 @@
 package utilityAndServices;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 import learning.Course;
 import learning.AccreditedCourse;
-import java.util.ArrayList;
-import java.util.List;
 import user.User;
 import learning.Subject;
-import java.util.Scanner;
-import java.util.HashSet;
-import java.util.Set;
 import learning.Difficulty;
 import learning.Level;
 import learning.Quiz;
@@ -36,6 +31,14 @@ public class ApplicationSite {
         return applicationSite;
     }
 
+    public void showSubjectsSorted() {
+        List<Subject> subjectsList = new ArrayList<>(subjectSet);// a set cannot be directly sorted; it does not retain the order of elements
+        Collections.sort(subjectsList); // using comparable implementation of interface
+        this.subjectSet = new LinkedHashSet<>(subjectsList); //linked set maintains the order
+        for (Subject subject : subjectSet) {
+            System.out.println(subject);
+        }
+    }
     public void showCoursesStarted() {
         Map<Course, Map<Quiz, String>> map = connectedUser.getCourseProgress();
         System.out.println("Your courses started are: ");
@@ -169,9 +172,18 @@ public class ApplicationSite {
     }
 
     public void showAllCourses() {
+        Collections.sort(courseList); // we use the comparable interface override
         System.out.println("These are the courses:");
         for (Course course : courseList) {
-            System.out.println(course);
+            //we will also find the subjects for the course in the map where the Course is the Key and the value a set of its subjects
+            StringBuilder courseSubjectsNames = new StringBuilder("Subjects of the course: "); // we use string builder because it is more efficient than to make all the concatenations
+            for (Subject subject : this.subjectsForCourses.get(course)) {
+                courseSubjectsNames.append(subject.getName()).append(", ");
+            };
+            if (!courseSubjectsNames.isEmpty()) {
+                courseSubjectsNames.setLength(courseSubjectsNames.length() - 2); // we get rid of the last comma
+            }
+            System.out.println(course + courseSubjectsNames.toString());
         }
     }
     public void addCourse() { // a registered user can add a course as a teacher
@@ -234,9 +246,9 @@ public class ApplicationSite {
 
     public void connectUser() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter username:");
+        System.out.println("Enter username (ex: mariap):");
         String userName = scanner.nextLine();
-        System.out.println("Enter password:");
+        System.out.println("Enter password (1234 for mariap):");
         String password = scanner.nextLine();
         boolean userFound = false;
         for (User user : userList) {
@@ -247,7 +259,7 @@ public class ApplicationSite {
                 return;
             }
         }
-        if (!userFound) {
+        if (userFound == false) {
             System.out.println("User does not exist!");
         }
     }

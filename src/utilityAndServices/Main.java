@@ -23,7 +23,7 @@ public class Main {
         S.userList.add(u3);
 
         // and some subjects
-        Subject s1 = new Subject("C++", "Basic C++");
+        Subject s1 = new Subject("c++", "Basic C++");
         Subject s2 = new Subject("java", "Introduction to java");
         Subject s3 = new Subject("biology", "advanced biology");
         S.subjectSet.add(s1);
@@ -42,8 +42,8 @@ public class Main {
                 new Quiz("Quiz 1",Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 42.5, u3, 10, Level.ADVANCED);
         Course c5 = new AccreditedCourse(18.0, "Course 5", Difficulty.EASY, List.of(
                 new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 13.5, u1, 5, Level.BASIC);
-        S.courseList.add(c1);
         S.courseList.add(c2);
+        S.courseList.add(c1);
         S.courseList.add(c3);
         S.courseList.add(c4);
         S.courseList.add(c5);
@@ -69,7 +69,7 @@ public class Main {
                 } else S.signupUser();
             }
             else{
-                System.out.println("1.Add a course 2.Disconnect 3.Show all subjects sorted by name 4.Show all courses 5.Buy a course 6.Show courses started\n");
+                System.out.println("1.Add a course 2.Disconnect 3.Show all subjects sorted by name 4.Show all courses (sorted by name) 5.Buy a course 6.Show courses started\n");
                 int command = scanner.nextInt();
                 switch (command) {
                     case 1:
@@ -79,7 +79,8 @@ public class Main {
                         S.disconnectUser();
                         break;
                     case 3:
-                        //S.showEnrolledCourses();
+                        S.showSubjectsSorted();
+                        break;
                     case 4:
                         S.showAllCourses();
                         break;
