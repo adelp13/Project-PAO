@@ -1,4 +1,5 @@
 package utilityAndServices;
+import java.sql.SQLException;
 import java.util.Scanner;
 import user.User;
 import learning.Subject;
@@ -10,14 +11,15 @@ import java.util.Set;
 import java.util.List;
 import learning.Quiz;
 import learning.Question;
-import java.util.HashSet;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         ApplicationSite S = ApplicationSite.getApplicationSite();
+        JdbcSettings J = JdbcSettings.getJdbcSettings();
         // we add some users
-        User u1 = new User("Popescu", "Maria", "1234", "mariap");
-        User u2 = new User("Paraschiv", "Andrei", "1234", "andreip");
-        User u3  = new User("Iliescu", "Andreea", "1234", "andreeai");
+        User u1 = new User("Popescu", true, "Maria", "1234", "mariap");
+        User u2 = new User("Paraschiv", false, "Andrei", "1234", "andreip");
+        User u3  = new User("Iliescu", false, "Andreea", "1234", "andreeai");
         S.userList.add(u1);
         S.userList.add(u2);
         S.userList.add(u3);
@@ -69,7 +71,8 @@ public class Main {
                 } else S.signupUser();
             }
             else{
-                System.out.println("1.Add a course 2.Disconnect 3.Show all subjects sorted by name 4.Show all courses (sorted by name) 5.Buy a course 6.Show courses started\n");
+                System.out.println("1.Add a course 2.Disconnect 3.Show courses started 4.Show all courses (sorted by name) 5.Buy a course 6.Show all subjects sorted by name\n");
+                System.out.println("7.ModifySubjects\n");
                 int command = scanner.nextInt();
                 switch (command) {
                     case 1:
@@ -79,7 +82,7 @@ public class Main {
                         S.disconnectUser();
                         break;
                     case 3:
-                        S.showSubjectsSorted();
+                        S.showCoursesStarted();
                         break;
                     case 4:
                         S.showAllCourses();
@@ -88,10 +91,15 @@ public class Main {
                         S.buyCourse();
                         break;
                     case 6:
-                        S.showCoursesStarted();
+                        S.showSubjectsSorted();
+                        break;
+                    case 7:
+                        J.crudSubjects(S.getConnectedUser());
+                        break;
                     default:
                 }
             }
         }
     }
 }
+

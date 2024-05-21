@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Course implements Comparable<Course> {
-    protected String name;
-    protected Difficulty difficulty;
-    protected double length; // in hours
+    private String name;
+    private Difficulty difficulty;
+    private double length; // in hours
 
     protected User teacher;
     protected double price; // euro

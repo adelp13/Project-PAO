@@ -12,10 +12,6 @@ public final class Card { //immutable class
         this.expirationDate = expirationDate;
         this.CVV = CVV;
     }
-    @Override
-    public String toString() {
-        return "name on card: " + nameOnCard + " card number: " + cardNo;
-    }
     public String getCardNo() {
         return cardNo;
     }
@@ -32,4 +28,8 @@ public final class Card { //immutable class
         return CVV;
     }
     // we don't need setters, members are final
+    @Override
+    public String toString() {
+        return "name on card: " + nameOnCard + " card number: " + cardNo;
+    }
 }

@@ -1,4 +1,5 @@
 package user;
+import java.util.UUID;
 import payment.Card;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,26 +10,27 @@ import java.util.HashMap;
 import learning.Course;
 import learning.Quiz;
 public class User { // a user can be both student and teacher
-    private final int idUser;
     private Map<Course, Map<Quiz, String>> courseProgress; // the courses where the user is enrolled and points obtained for every quiz
     private final String userName; // user name has to be unique
     private final String registrationDate;
+    private final boolean administrator;
     private final String lastName;
     private String firstName;
     private String password;
     protected List <Card> cardList;
     private static int userNo;
-    static {
-        userNo = 0;
-    }
+
+    private final UUID id;
 
     {
-        this.idUser = userNo++;
+        this.id = UUID.randomUUID();
         this.registrationDate = UtilityClass.getCurrentDate();
     }
-    public User (String lastName, String firstName, String password, String userName) {
+
+    public User (String lastName, boolean administrator, String firstName, String password, String userName) {
         this.lastName = lastName;
         this.firstName = firstName;
+        this.administrator = administrator;
         this.cardList = new ArrayList<>(); // at first there are no cards
         this.password = password;
         this.userName = userName;
@@ -93,8 +95,19 @@ public class User { // a user can be both student and teacher
         return this.registrationDate;
     }
 
+    public boolean getAdministrator() {
+        return administrator;
+    }
     public Map<Course, Map<Quiz, String>> getCourseProgress() {return this.courseProgress;}
+    public UUID getIdUser() {
+        return this.id;
+    }
     public void setCardList(List<Card> cardList) {
         this.cardList = cardList;
+    }
+
+    @Override
+    public String toString() {
+        return "user " + userName + " registered on " + registrationDate + (administrator ? "ADMINISTRATOR" : "");
     }
 }

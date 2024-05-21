@@ -48,12 +48,12 @@ public class Quiz {
         return ((double) score / calculateTotalQuizPoints()) * 100;
     }
 
-    @Override
-    public String toString() {
-        return "Quiz named " + name + " with " + questionList.size() + " questions. ";
-    }
     public String getName() {
         return this.name;
     }
 
+    @Override
+    public String toString() {
+        return "Quiz named " + name + " with " + questionList.size() + " questions. ";
+    }
 }

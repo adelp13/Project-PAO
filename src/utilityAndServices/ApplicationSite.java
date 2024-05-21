@@ -31,6 +31,9 @@ public class ApplicationSite {
         return applicationSite;
     }
 
+    public User getConnectedUser() {
+        return connectedUser;
+    }
     public void showSubjectsSorted() {
         List<Subject> subjectsList = new ArrayList<>(subjectSet);// a set cannot be directly sorted; it does not retain the order of elements
         Collections.sort(subjectsList); // using comparable implementation of interface
@@ -288,7 +291,7 @@ public class ApplicationSite {
         System.out.println("Enter first name:");
         String firstName = scanner.nextLine();
 
-        User user = new User(lastName,firstName, password, userName);
+        User user = new User(lastName, false, firstName, password, userName);
         userList.add(user);
         System.out.println("User " + userName + " assigned on " + user.getRegistrationDate());
     }

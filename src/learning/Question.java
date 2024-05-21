@@ -25,4 +25,9 @@ public class Question implements Comparable<Question>{
     public String getAnswer() {
         return answer;
     }
+
+    @Override
+    public String toString() {
+        return "Question is " + question + " and the answer is " + answer + " ( " + points + " points\n";
+    }
 }
