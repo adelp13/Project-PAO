@@ -1,8 +1,5 @@
 package utilityAndServices;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 
 import learning.Course;
@@ -80,6 +77,41 @@ public class ApplicationSite {
         } catch (SQLException se) {
             System.err.println("Users loading in RAM failed: " + se.toString());
         }
+
+        //we load in the User.cardsList infos from userHasCard andCard
+        queryText = "select * from UserHasCard";
+        try (Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery(queryText);
+            while (rs.next()) {
+                String userId = rs.getString("userId");
+                String cardId = rs.getString("cardId");
+                String queryText2 = "select * from Card where id=?";
+                try (PreparedStatement pstmt = connection.prepareStatement(queryText2)) {
+                    pstmt.setString(1, cardId);
+                    ResultSet rs2 = pstmt.executeQuery();
+                    if (rs2.next()) {
+                        String cardNo = rs2.getString("cardNo");
+                        String nameOnCard = rs2.getString("nameOnCard");
+                        String expirationDate = rs2.getString("expirationDate");
+                        int CVV = rs2.getInt("CVV");
+                        Card cardFound = new Card(UUID.fromString(cardId), cardNo, nameOnCard, expirationDate, CVV);
+                        for (User user : userList) {
+                            if (((user.getIdUser()).toString()).equals(userId)) {
+                                (user.getCardList()).add(cardFound); // we add to the user the card pair from table UserHasCard
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch (SQLException se) {
+                    System.err.println("Card not loaded: " + se.toString());
+                }
+            }
+        } catch (SQLException se) {
+            System.err.println("Cards not loaded: " + se.toString());
+        }
+
+
     }
     public void showCoursesStarted() {
         Map<Course, Map<Quiz, String>> map = connectedUser.getCourseProgress();
@@ -127,7 +159,7 @@ public class ApplicationSite {
             });
         }
     }
-    public void buyCourse() { // the connected user can buy a course
+    public void buyCourse() throws SQLException { // the connected user can buy a course
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter course name:");
@@ -155,19 +187,31 @@ public class ApplicationSite {
 
         return false;
     }
-    public void manageCardsToBuy(Course course) { // we display the cards and choose one to pay
+    public void manageCardsToBuy(Course course) throws SQLException { // we display the cards and choose one to pay
         displayCardsOfConnectedUser();
-
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Do you want to add a card? (y/n)");
+
+        System.out.println("Do you want to delete a card? yes/no");
         String command = scanner.nextLine();
+        if (command.equalsIgnoreCase("yes")) {
+            System.out.println("Select the card you want to delete. (enter index)");
+            int index = scanner.nextInt();
+            index -= 1;
+            JdbcSettings J = JdbcSettings.getJdbcSettings();
+            J.deleteCardJDBC((connectedUser.getCardList()).get(index), connectedUser);
+            (connectedUser.getCardList()).remove((connectedUser.getCardList()).get(index)); // delete from user.cardList
+        }
+
+        displayCardsOfConnectedUser();
+        System.out.println("Do you want to add a card? (y/n)");
+        command = scanner.nextLine();
         if (command.equalsIgnoreCase("y")) {
             connectedUser.addCard();
             Card card = (connectedUser.getCardList()).getLast(); // we get the new card and display it
             System.out.println( (connectedUser.getCardList()).size() + ". " + card);
         }
         else {
-            if ( (connectedUser.getCardList()).isEmpty()) {
+            if ( (connectedUser.getCardList()).isEmpty())  {
                 System.out.println("You have no cards. 1.add a card 2. exit");
                 int c = scanner.nextInt();
                 scanner.nextLine();
@@ -195,6 +239,7 @@ public class ApplicationSite {
             System.out.println("Payment not succsefull");
             manageCardsToBuy(course); // we display again the cards with the possibility of adding more
         };
+
     }
     public void displayCardsOfConnectedUser() {
         int i = 0;
@@ -203,8 +248,8 @@ public class ApplicationSite {
         }
         System.out.println("Those are your cards:");
         for (Card card : connectedUser.getCardList()){
-            System.out.println(i + ". " + card);
             i += 1;
+            System.out.println(i + ". " + card);
         }
     }
     public void displaySubjects() {
@@ -229,9 +274,7 @@ public class ApplicationSite {
                 course.setTeacher(null);
             }
         }
-
         userList.remove(user);
-
     }
     public void addSubject(Subject subject) {
         subjectSet.add(subject);

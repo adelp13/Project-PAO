@@ -3,6 +3,7 @@ import user.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Course implements Comparable<Course> {
     private String name;
@@ -58,4 +59,5 @@ public class Course implements Comparable<Course> {
     public String toString() {
         return "Course " + name + " with " + length + " hours of video content, "  + ((teacher == null) ? ("the teacher left the platform \n") : ("taught by " + teacher.getLastName() + " " + teacher.getFirstName() + "\n"));
     }
+
 }

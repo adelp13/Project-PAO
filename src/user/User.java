@@ -1,16 +1,14 @@
 package user;
-import java.util.UUID;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
 
 import learning.Subject;
 import payment.Card;
-import java.util.ArrayList;
-import java.util.List;
 
 import utilityAndServices.ApplicationSite;
+import utilityAndServices.JdbcSettings;
 import utilityAndServices.UtilityClass;
-import java.util.Scanner;
-import java.util.Map;
-import java.util.HashMap;
 import learning.Course;
 import learning.Quiz;
 import utilityAndServices.crudInterface;
@@ -96,30 +94,26 @@ public class User extends crudInterface<User>  { // a user can be both student a
         }
         return false;
     }
-    public void addCard() { // method for an user to add a card which can be used to pay for courses
-        Scanner scanner = new Scanner(System.in);
+    public void addCard() throws SQLException { // method for an user to add a card which can be used to pay for courses
+        Card newCard = new Card();
+        newCard.read();
+        cardList.add(newCard); // this is composition, a card exists only for its user
+        System.out.println("Card has been added succsefully.\n");
 
-        System.out.println("Enter card number: ");
-        String cardNo = scanner.nextLine();
+        //Add it in jdbc
+        JdbcSettings J = JdbcSettings.getJdbcSettings();
+        newCard.createJDBC(J.getConnection());
+        //now we have to add in the UserHasCard table
+        String queryText = "insert into UserHasCard values(?,?)";
 
-        // we have to check if the card is already in the list
-        for (Card card : cardList) {
-            if (card.getCardNo().equals(cardNo)){
-                System.out.println("Card already registered!");
-                return;
-            }
+        try(PreparedStatement pstmt = (J.getConnection()).prepareStatement(queryText)) {
+            pstmt.setString(1, getIdUser().toString());
+            pstmt.setString(2, (newCard.getIdCard()).toString());
+            pstmt.executeUpdate();
         }
-        System.out.println("Enter name on card: ");
-        String nameOnCard = scanner.nextLine();
-
-        System.out.println("Enter expiration date: ");
-        String expirationDate = scanner.nextLine();
-
-        System.out.println("Enter CVV: ");
-        int CVV = scanner.nextInt();
-
-        cardList.add(new Card(cardNo, nameOnCard, expirationDate, CVV)); // this is composition, a card exists only for its user
-        System.out.println("Card have been added succsefully.\n");
+        catch (SQLException se) {
+            System.err.println("Card creation failed" + se.toString());
+        }
     }
      public String getUserName() {
         return this.userName;
@@ -151,6 +145,10 @@ public class User extends crudInterface<User>  { // a user can be both student a
     }
     public void setPassword(String password){
         this.password = password;
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userName);
     }
     @Override
     public String toString() {

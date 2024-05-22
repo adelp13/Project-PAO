@@ -4,6 +4,7 @@ import user.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Quiz {
@@ -51,7 +52,6 @@ public class Quiz {
     public String getName() {
         return this.name;
     }
-
     @Override
     public String toString() {
         return "Quiz named " + name + " with " + questionList.size() + " questions. ";

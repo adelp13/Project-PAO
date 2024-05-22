@@ -17,7 +17,7 @@ insert into Subject values('9dc85a16-5e65-4b4c-b1d8-faeed5d5295c', 'biology', 'a
 create table User (
     id varchar(36) not null primary key,
     userName varchar(50) not null unique,
-    registrationDate date not null,
+    registrationDate varchar(50) not null,
     administrator Boolean not null,
     lastName varchar(50) not null,
     firstName varchar(50) not null,
@@ -30,8 +30,22 @@ insert into User (id, userName, registrationDate, administrator, lastName, first
 ('b9c3efaf-79c5-4395-9c2e-df4853b4fb1e', 'andreeai', '2024-05-22', FALSE, 'Iliescu', 'Andreea', '1234');
 
 
+create table Card (
+    id varchar(36) not null primary key,
+    cardNo varchar(50) not null,
+    nameOnCard varchar(100) not null,
+    expirationDate varchar(10) not null,
+    CVV int not null
+);
 
-
+create table UserHasCard (
+    userId varchar(36) not null,
+    cardId varchar(50) not null,
+    primary key (userId, cardId),
+    FOREIGN KEY (userId) REFERENCES User(id),
+    FOREIGN KEY (cardId) REFERENCES Card(id)
+);
 
 drop table Subject;
 drop table User;
+drop table Card;

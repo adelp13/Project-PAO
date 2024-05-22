@@ -1,6 +1,6 @@
 package utilityAndServices;
 import java.sql.*;
-
+import payment.Card;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -176,6 +176,27 @@ public class JdbcSettings {
 
     }
 
+    public void deleteCardJDBC(Card cardToDelete, User connectedUser) {
+        String queryText = "delete from UserHasCard where userId=? and cardId=?";
+        try(PreparedStatement pstmt = connection.prepareStatement(queryText)) {
+            pstmt.setString(1, (connectedUser.getIdUser()).toString());
+            pstmt.setString(2, (cardToDelete.getIdCard()).toString());
+            pstmt.executeUpdate();
+        }
+        catch (SQLException se) {
+            System.err.println("Card deletion failed" + se.toString());
+        }
+
+        //now we delete the row from Card table
+        queryText = "delete from Card where id=?";
+        try(PreparedStatement pstmt = connection.prepareStatement(queryText)) {
+            pstmt.setString(1, (cardToDelete.getIdCard()).toString());
+            pstmt.executeUpdate();
+        }
+        catch (SQLException se) {
+            System.err.println("Card deletion failed" + se.toString());
+        }
+    }
     public void findUsers(User connectedUser) throws SQLException {
         String queryText = "select * from User where userName=?";
         System.out.println("Enter the user name: ");
