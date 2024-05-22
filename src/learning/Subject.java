@@ -10,10 +10,13 @@ public class Subject extends crudInterface<Subject> implements Comparable<Subjec
     private static int subjectsNo;
 
     private final UUID id;
-    {
-        this.id = UUID.randomUUID();
-    }
+
     public Subject(String name, String description) {
+        this(UUID.randomUUID(), name, description);
+    }
+
+    public Subject(UUID id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
     }
@@ -22,6 +25,9 @@ public class Subject extends crudInterface<Subject> implements Comparable<Subjec
         return name;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
     public String getDescription() {
         return description;
     }

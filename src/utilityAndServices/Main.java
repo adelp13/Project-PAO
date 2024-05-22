@@ -16,34 +16,35 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         ApplicationSite S = ApplicationSite.getApplicationSite();
         JdbcSettings J = JdbcSettings.getJdbcSettings();
+        S.loadFromDatabase(J.getConnection()); // we load the info from the mysql database into sets, maps etc of the Application Site
         // we add some users
         User u1 = new User("Popescu", true, "Maria", "1234", "mariap");
         User u2 = new User("Paraschiv", false, "Andrei", "1234", "andreip");
         User u3  = new User("Iliescu", false, "Andreea", "1234", "andreeai");
-        S.userList.add(u1);
-        S.userList.add(u2);
-        S.userList.add(u3);
+//        S.userList.add(u1);
+//        S.userList.add(u2);
+//        S.userList.add(u3);
 
         // and some subjects
         Subject s1 = new Subject("c++", "Basic C++");
         Subject s2 = new Subject("java", "Introduction to java");
         Subject s3 = new Subject("biology", "advanced biology");
-        S.subjectSet.add(s1);
-        S.subjectSet.add(s2);
-        S.subjectSet.add(s3);
+//        S.subjectSet.add(s1);
+//        S.subjectSet.add(s2);
+//        S.subjectSet.add(s3);
 
         // we add courses with their teacher (an user already added)
         Course c1 = new Course(10.0, "Course 1", Difficulty.EASY, List.of(
                 new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2))),
-                new Quiz("Quiz 2", Difficulty.MEDIUM,List.of(new Question("2+1", "3", 2), new Question("1+1", "2", 3)))), 10.0, u1);
+                new Quiz("Quiz 2", Difficulty.MEDIUM,List.of(new Question("2+1", "3", 2), new Question("1+1", "2", 3)))), 10.0, S.userList.getFirst());
         Course c2 = new Course(20.0, "Course 2", Difficulty.MEDIUM, List.of(
-                new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 15.0, u2);
+                new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 15.0, S.userList.get(1));
         Course c3 = new Course(30.0, "Course 3", Difficulty.HARD, List.of(
-                new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 30.5, u3);
+                new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 30.5, S.userList.get(2));
         Course c4 = new AccreditedCourse(15.0, "Course 4", Difficulty.HARD, List.of(
-                new Quiz("Quiz 1",Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 42.5, u3, 10, Level.ADVANCED);
+                new Quiz("Quiz 1",Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 42.5, S.userList.get(2), 10, Level.ADVANCED);
         Course c5 = new AccreditedCourse(18.0, "Course 5", Difficulty.EASY, List.of(
-                new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 13.5, u1, 5, Level.BASIC);
+                new Quiz("Quiz 1", Difficulty.EASY, List.of(new Question("1+1", "2", 2), new Question("1+1", "2", 2)))), 13.5, S.userList.getFirst(), 5, Level.BASIC);
         S.courseList.add(c2);
         S.courseList.add(c1);
         S.courseList.add(c3);
@@ -72,7 +73,7 @@ public class Main {
             }
             else{
                 System.out.println("1.Add a course 2.Disconnect 3.Show courses started 4.Show all courses (sorted by name) 5.Buy a course 6.Show all subjects sorted by name\n");
-                System.out.println("7.ModifySubjects\n");
+                System.out.println("7.ModifySubjects 8.Manage Account 9.Find User by userName\n");
                 int command = scanner.nextInt();
                 switch (command) {
                     case 1:
@@ -94,7 +95,17 @@ public class Main {
                         S.showSubjectsSorted();
                         break;
                     case 7:
-                        J.crudSubjects(S.getConnectedUser());
+                        if (S.getConnectedUser().getAdministrator())
+                            J.crudSubjects(S.getConnectedUser());
+                        else {
+                            System.out.println("Only administrators can modify the subjects!");
+                        }
+                        break;
+                    case 8:
+                        J.crudUsers(S.getConnectedUser());
+                        break;
+                    case 9:
+                        J.findUsers(S.getConnectedUser());
                         break;
                     default:
                 }

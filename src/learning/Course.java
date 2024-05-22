@@ -9,14 +9,17 @@ public class Course implements Comparable<Course> {
     private Difficulty difficulty;
     private double length; // in hours
 
-    protected User teacher;
-    protected double price; // euro
+    private User teacher; // if this is null it means the instructor left the platform and lost all the earnings
+    private double price; // euro
 
-    protected List<Quiz> quizList = new ArrayList<>();
+    private List<Quiz> quizList = new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return "Course " + name + " with " + length + " hours of video content, taught by " + teacher.getLastName() + " " + teacher.getFirstName() + "\n";
+    public User getTeacher() {
+        return this.teacher;
+    }
+
+    public void setTeacher(User teacher) {
+        this.teacher = teacher;
     }
     public Course(double price, String name, Difficulty difficulty, List<Quiz> quizList,  double length, User teacher) {
         this.name = name;
@@ -49,5 +52,10 @@ public class Course implements Comparable<Course> {
     @Override
     public int compareTo(Course course) {
         return this.name.compareTo(course.name);
+    }
+
+    @Override
+    public String toString() {
+        return "Course " + name + " with " + length + " hours of video content, "  + ((teacher == null) ? ("the teacher left the platform \n") : ("taught by " + teacher.getLastName() + " " + teacher.getFirstName() + "\n"));
     }
 }

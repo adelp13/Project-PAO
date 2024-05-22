@@ -1,0 +1,37 @@
+mysql --version
+MySQL -u Adela -p 
+83383
+show databases;
+create database ...;
+create table Subject (  
+    id varchar(50) not null,  
+    name varchar(50) not null,  
+    description varchar(50) not null,  
+    PRIMARY KEY (id)  
+);  
+insert into Subject values('7b871a3d-4b1a-46c1-86ab-79807160ef10', 'java', 'Introduction to java');
+insert into Subject values('e805cd2e-3f3a-40a1-9a90-73b3f4e38ef7', 'values', 'Basic C++');
+insert into Subject values('9dc85a16-5e65-4b4c-b1d8-faeed5d5295c', 'biology', 'advanced biology');
+
+
+create table User (
+    id varchar(36) not null primary key,
+    userName varchar(50) not null unique,
+    registrationDate date not null,
+    administrator Boolean not null,
+    lastName varchar(50) not null,
+    firstName varchar(50) not null,
+    password varchar(50) not null
+);
+
+insert into User (id, userName, registrationDate, administrator, lastName, firstName, password) VALUES
+('24650b1e-6d63-4a2d-8bc1-7027f6ae9b6e', 'mariap', '2024-05-22', TRUE, 'Popescu', 'Maria', '1234'),
+('7fdabf2b-3199-4e44-8d6d-2e4a68d86e85', 'andreip', '2024-05-22', FALSE, 'Paraschiv', 'Andrei', '1234'),
+('b9c3efaf-79c5-4395-9c2e-df4853b4fb1e', 'andreeai', '2024-05-22', FALSE, 'Iliescu', 'Andreea', '1234');
+
+
+
+
+
+drop table Subject;
+drop table User;

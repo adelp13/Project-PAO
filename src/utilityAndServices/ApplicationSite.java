@@ -1,4 +1,8 @@
 package utilityAndServices;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 import learning.Course;
@@ -25,6 +29,9 @@ public class ApplicationSite {
         connectedUser = null; // initially there is no user connected
     }
 
+    public List<User> getUserList() {
+        return userList;
+    }
     public static ApplicationSite getApplicationSite() {
         if (applicationSite == null)
             applicationSite = new ApplicationSite();
@@ -40,6 +47,38 @@ public class ApplicationSite {
         this.subjectSet = new LinkedHashSet<>(subjectsList); //linked set maintains the order
         for (Subject subject : subjectSet) {
             System.out.println(subject);
+        }
+    }
+
+    public void loadFromDatabase(Connection connection) {
+        //we load the subjects in the set
+        String queryText = "select * from Subject";
+        try(Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery(queryText);
+            while (rs.next()) {
+                Subject s = new Subject(UUID.fromString(rs.getString("id")), rs.getString("name"), rs.getString("description"));
+                subjectSet.add(s);
+            }
+        }
+        catch (SQLException se) {
+            System.err.println("Subjects loading in RAM failed" + se.toString());
+        }
+        //we load the users in the list
+        queryText = "select * from User";
+        try (Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery(queryText);
+            while (rs.next()) {
+                UUID id = UUID.fromString(rs.getString("id"));
+                String lastName = rs.getString("lastName");
+                boolean administrator = rs.getBoolean("administrator");
+                String firstName = rs.getString("firstName");
+                String password = rs.getString("password");
+                String userName = rs.getString("userName");
+                User user = new User(id, lastName, administrator, firstName, password, userName);
+                userList.add(user);
+            }
+        } catch (SQLException se) {
+            System.err.println("Users loading in RAM failed: " + se.toString());
         }
     }
     public void showCoursesStarted() {
@@ -173,7 +212,38 @@ public class ApplicationSite {
             System.out.println(subject);
         }
     }
+    public void deleteSubject(String name){
+        for (Subject subject : subjectSet) {
+            if (subject.getName().equalsIgnoreCase(name)) {
+                subjectSet.remove(subject);
+                break;
+            }
+        }
+    }
 
+    public void deleteUser(User user){
+        connectedUser = null;
+        //before deleting it, we have to mark as null the references in the course object to this user
+        for (Course course : courseList) {
+            if (course.getTeacher().equals(user)) {
+                course.setTeacher(null);
+            }
+        }
+
+        userList.remove(user);
+
+    }
+    public void addSubject(Subject subject) {
+        subjectSet.add(subject);
+    }
+    public void updateSubjectDescription(String subjectName, String newDescription) {
+        for (Subject subject : subjectSet) {
+            if (subject.getName().equalsIgnoreCase(subjectName)) {
+                subject.setDescription(newDescription);
+                break;
+            }
+        }
+    }
     public void showAllCourses() {
         Collections.sort(courseList); // we use the comparable interface override
         System.out.println("These are the courses:");
@@ -272,28 +342,15 @@ public class ApplicationSite {
         connectedUser = null;
     }
 
-    public void signupUser() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter username:");
-        String userName = scanner.nextLine();
+    public void signupUser() throws SQLException {
+        User obj = new User();
+        obj.read();
+        userList.add(obj);
+        System.out.println("User " + obj.getUserName() + " assigned on " + obj.getRegistrationDate());
 
-        for (User user : userList) { // we ensure there isn't already a user with the same user name
-            if (user.getUserName().equals(userName)) {
-                System.out.println("Username must be unique");
-                return;
-            }
-        }
-        // to do: implement regex for password
-        System.out.println("Enter password:");
-        String password = scanner.nextLine();
-        System.out.println("Enter last name:");
-        String lastName = scanner.nextLine();
-        System.out.println("Enter first name:");
-        String firstName = scanner.nextLine();
-
-        User user = new User(lastName, false, firstName, password, userName);
-        userList.add(user);
-        System.out.println("User " + userName + " assigned on " + user.getRegistrationDate());
+        //JDBC part
+        JdbcSettings J = JdbcSettings.getJdbcSettings();
+        obj.createJDBC(J.getConnection());
     }
 
 }
