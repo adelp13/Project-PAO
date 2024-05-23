@@ -46,6 +46,31 @@ create table UserHasCard (
     FOREIGN KEY (cardId) REFERENCES Card(id)
 );
 
+create table Course (
+    id int AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    difficulty ENUM('easy', 'medium', 'hard') NOT NULL,
+    length DOUBLE NOT NULL,
+    teacherId VARCHAR(36),
+    price DOUBLE NOT NULL,
+    FOREIGN KEY (teacherId) REFERENCES User(id)
+);
+
+
+create table AccreditedCourse (
+    id int AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    difficulty ENUM('easy', 'medium', 'hard') not null,
+    length DOUBLE not null,
+    teacherId varchar(36),
+    price DOUBLE not null,
+    accreditationPeriod int not null,
+    accreditationLevel ENUM('basic', 'intermediate', 'advanced') NOT NULL,
+    FOREIGN KEY (teacherId) REFERENCES User(id)
+);
+
 drop table Subject;
 drop table User;
+drop table Course;
+drop table AccreditCourse;
 drop table Card;

@@ -1,11 +1,12 @@
 package learning;
+import payment.Card;
 import user.User;
+import utilityAndServices.ApplicationSite;
+import utilityAndServices.crudInterface;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-public class Course implements Comparable<Course> {
+public class Course extends crudInterface<learning.Course> implements Comparable<Course> {
     private String name;
     private Difficulty difficulty;
     private double length; // in hours
@@ -33,6 +34,38 @@ public class Course implements Comparable<Course> {
     public Course() {
 
     }
+
+    @Override
+    public String getObjectType() {
+        return "Course";
+    }
+
+    @Override
+    public List<Object> getParametersValues() { // se respecta ordinea atributelor ordinea aributelor
+        List<Object> lista = new ArrayList<>(List.of(name, price, difficulty, length, (teacher.getIdUser()).toString() ));
+        return lista;
+    }
+
+    @Override
+    public Course read() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter course name:");
+        this.name = scanner.nextLine();
+        // to do: request to enter quizes and question
+        System.out.println("Enter course difficulty:");
+        this.difficulty = Difficulty.valueOf(scanner.nextLine());
+
+        System.out.println("Enter course length (in hours):");
+        this.length = scanner.nextDouble();
+        scanner.nextLine();
+        System.out.println("Enter course price:");
+        this.price = scanner.nextDouble();
+        scanner.nextLine();
+        ApplicationSite S = ApplicationSite.getApplicationSite();
+        this.teacher = S.getConnectedUser();
+        return this;
+    }
     public Difficulty getDifficulty() {
         return difficulty;
     }
@@ -53,6 +86,11 @@ public class Course implements Comparable<Course> {
     @Override
     public int compareTo(Course course) {
         return this.name.compareTo(course.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override

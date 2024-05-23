@@ -12,10 +12,12 @@ import java.util.List;
 import learning.Quiz;
 import learning.Question;
 
+
 public class Main {
     public static void main(String[] args) throws SQLException {
         ApplicationSite S = ApplicationSite.getApplicationSite();
         JdbcSettings J = JdbcSettings.getJdbcSettings();
+        AuditMeniu A = AuditMeniu.getAuditMeniu();
         S.loadFromDatabase(J.getConnection()); // we load the info from the mysql database into sets, maps etc of the Application Site
         // we add some users
         User u1 = new User("Popescu", true, "Maria", "1234", "mariap");
@@ -69,7 +71,16 @@ public class Main {
                 scanner.nextLine();
                 if (command == 1) {
                     S.connectUser();
-                } else S.signupUser();
+                    try{
+                        A.insertAction("Login user");
+                    } catch (Exception e) {
+                        System.err.println( e.getMessage());
+                    }
+
+            } else {
+                    S.signupUser();
+                    A.insertAction("Sign up user" + S.getUserList().getLast().getUserName());
+                }
             }
             else{
                 System.out.println("1.Add a course 2.Disconnect 3.Show courses started 4.Show all courses (sorted by name) 5.Buy a course 6.Show all subjects sorted by name\n");
@@ -78,18 +89,43 @@ public class Main {
                 switch (command) {
                     case 1:
                         S.addCourse();
+                        try{
+                            A.insertAction("Add course");
+                        } catch (Exception e) {
+                            System.err.println( e.getMessage());
+                        }
                         break;
                     case 2:
                         S.disconnectUser();
+                        try{
+                            A.insertAction("User disconnected");
+                        } catch (Exception e) {
+                            System.err.println( e.getMessage());
+                        }
                         break;
                     case 3:
                         S.showCoursesStarted();
+                        try{
+                            A.insertAction("User " + S.getConnectedUser().getUserName() + "wanted to see the course started");
+                        } catch (Exception e) {
+                            System.err.println( e.getMessage());
+                        }
                         break;
                     case 4:
                         S.showAllCourses();
+                        try{
+                            A.insertAction("User " + S.getConnectedUser().getUserName() + "wanted to see all courses");
+                        } catch (Exception e) {
+                            System.err.println( e.getMessage());
+                        }
                         break;
                     case 5:
                         S.buyCourse();
+                        try{
+                            A.insertAction("User " + S.getConnectedUser().getUserName() + "bought a course");
+                        } catch (Exception e) {
+                            System.err.println( e.getMessage());
+                        }
                         break;
                     case 6:
                         S.showSubjectsSorted();

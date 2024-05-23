@@ -29,6 +29,9 @@ public class ApplicationSite {
     public List<User> getUserList() {
         return userList;
     }
+    public Set<Subject> getSubjectSet() {
+        return subjectSet;
+    }
     public static ApplicationSite getApplicationSite() {
         if (applicationSite == null)
             applicationSite = new ApplicationSite();
@@ -302,23 +305,29 @@ public class ApplicationSite {
             System.out.println(course + courseSubjectsNames.toString());
         }
     }
-    public void addCourse() { // a registered user can add a course as a teacher
+    public void addCourse() throws SQLException  { // a registered user can add a course as a teacher
         Scanner scanner = new Scanner(System.in);
+        Course newCourse;
+        System.out.println("Is the course accredited? (y/n)");
+        String isAccredited = scanner.next();
+        if (isAccredited.equals("y")) {
+            newCourse = new AccreditedCourse();
+        }
+        else {
+            newCourse = new Course();
+        }
 
-        System.out.println("Enter course name:");
-        String name = scanner.nextLine();
-
-        // to do: request to enter quizes and question
+        newCourse.read();
 
         System.out.println("This is the list of subjects:");
-        displaySubjects();
+        ApplicationSite S = ApplicationSite.getApplicationSite();
+        S.displaySubjects();
         System.out.println("Choose at least one subject (write their names):");
-        String[] chosenSubjects = scanner.nextLine().split("[,\\s]+");
+        String[] chosenSubjects = scanner.next().split("[,\\s]+");
         Set<Subject> courseSubjects = new HashSet<>();
 
-        System.out.println("Enter course difficulty:");
-        Difficulty difficulty = Difficulty.valueOf(scanner.nextLine());
-        for (Subject subject : subjectSet) {
+
+        for (Subject subject : S.getSubjectSet()) {
             for (String subjectName : chosenSubjects)  {
                 if (subject.getName().equalsIgnoreCase(subjectName)) {
                     courseSubjects.add(subject);
@@ -328,35 +337,10 @@ public class ApplicationSite {
         }
         System.out.println("You have added " + courseSubjects.size() + " subjects.");
 
-        System.out.println("Enter course length (in hours):");
-        double length = scanner.nextDouble();
-        scanner.nextLine();
-
-        Course newCourse;
-        System.out.println("Is the course accredited? (y/n)");
-        String isAccredited = scanner.nextLine();
-
-        System.out.println("Enter course price:");
-        double price = scanner.nextDouble();
-        scanner.nextLine();
-
-        if (isAccredited.equals("y")) {
-            System.out.println("Enter accreditation period (in years):");
-            int accreditationPeriod = scanner.nextInt();
-            scanner.nextLine();
-
-            System.out.println("Enter accreditation level:");
-            Level accreditationLevel = Level.valueOf(scanner.nextLine());
-
-            newCourse = new AccreditedCourse(price, name, difficulty, null, length, connectedUser, accreditationPeriod, accreditationLevel);
-        }
-        else {
-            newCourse = new Course(price, name, difficulty, null, length, connectedUser);
-        }
-
         courseList.add(newCourse);
         subjectsForCourses.put(newCourse, courseSubjects); // we add in the map the course with its subjects
-
+        JdbcSettings J = JdbcSettings.getJdbcSettings();
+        newCourse.createJDBC(J.getConnection());
         System.out.println("Course has been added successfully");
     }
 
