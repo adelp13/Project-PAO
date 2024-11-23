@@ -340,7 +340,7 @@ public class ApplicationSite {
         courseList.add(newCourse);
         subjectsForCourses.put(newCourse, courseSubjects); // we add in the map the course with its subjects
         JdbcSettings J = JdbcSettings.getJdbcSettings();
-        newCourse.createJDBC(J.getConnection());
+        //newCourse.createJDBC(J.getConnection());// in progress
         System.out.println("Course has been added successfully");
     }
 

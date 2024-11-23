@@ -8,6 +8,8 @@ import java.util.*;
 
 public class Course extends crudInterface<learning.Course> implements Comparable<Course> {
     private String name;
+    private final int id;
+    private static int courseNo = 0;
     private Difficulty difficulty;
     private double length; // in hours
 
@@ -20,6 +22,10 @@ public class Course extends crudInterface<learning.Course> implements Comparable
         return this.teacher;
     }
 
+    {
+        id = courseNo;
+        courseNo += 1;
+    }
     public void setTeacher(User teacher) {
         this.teacher = teacher;
     }
@@ -42,7 +48,7 @@ public class Course extends crudInterface<learning.Course> implements Comparable
 
     @Override
     public List<Object> getParametersValues() { // se respecta ordinea atributelor ordinea aributelor
-        List<Object> lista = new ArrayList<>(List.of(name, price, difficulty, length, (teacher.getIdUser()).toString() ));
+        List<Object> lista = new ArrayList<>(List.of(id, name, price, difficulty, length, (teacher.getIdUser()).toString() ));
         return lista;
     }
 
